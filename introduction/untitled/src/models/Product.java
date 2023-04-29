@@ -2,27 +2,28 @@ package models;
 
 public class Product {
 
-    private Long id;
+    private Integer id;
     private String name;
     private Float price;
     private Integer stock;
+    private Boolean isActive;
 
     public Product() {
 
     }
 
-    public Product(Long id, String name, Float price, Integer stock) {
+    public Product(Integer id, String name, Float price, Integer stock) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.stock = stock;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         if (id <= 0)
             System.out.println("Atenção: O ID não pode ser menor ou igual a 0.");
 
@@ -58,8 +59,16 @@ public class Product {
         this.stock = stock;
     }
 
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
     @Override
     public String toString() {
-        return "Product ID: " + id + " - Name: " + name + " - Price = $" + price + " - Stock: " + stock + ";";
+        return "ID: " + id + " - Nome: " + name + " - Preço = $" + price + " - Estoque: " + stock + " - Ativo: " + isActive;
     }
 }

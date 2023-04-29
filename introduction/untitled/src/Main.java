@@ -23,15 +23,16 @@ public class Main {
             System.out.println("4) Alterar um produto");
             System.out.println("5) Excluir um produto");
             System.out.println("9) Sair");
+            System.out.println();
 
-            System.out.print("Selecione uma opção: ");
+            System.out.print("-> ");
             menuOption = sc.next().charAt(0);
 
             Product product = new Product();
 
             switch (menuOption) {
                 case '1':
-                    product.setId(Long.valueOf(productList.size() + 1));
+                    product.setId(productList.size() + 1);
 
                     System.out.print("Entre com o nome do produto: ");
                     product.setName(sc.next());
@@ -42,12 +43,34 @@ public class Main {
                     System.out.print("Entre com o estoque do produto: ");
                     product.setStock(sc.nextInt());
 
+                    System.out.println("Produto ativo?");
+                    System.out.println("1) Sim");
+                    System.out.println("2) Não");
+                    System.out.print("-> ");
+
+                    char isProductActive = sc.next().charAt(0);
+
+                    while (isProductActive != '1' && isProductActive != '2') {
+                        System.out.println();
+                        System.out.println("Atenção: entre apenas com o caractere '1' para sim ou '2' para não.");
+                        System.out.println();
+
+                        System.out.println("Produto ativo?");
+                        System.out.println("1) Sim");
+                        System.out.println("2) Não");
+                        System.out.print("-> ");
+
+                        isProductActive = sc.next().charAt(0);
+                    }
+
+                    product.setActive(isProductActive == '1');
+
                     productList.add(product);
                     break;
 
                 case '2':
                     if (productList.isEmpty()) {
-                        System.out.println("Atenção: A lista de produtos está vazia.");
+                        System.out.println("Atenção: Não há produtos cadastrados no sistema.");
                         break;
                     }
 
@@ -62,6 +85,28 @@ public class Main {
                     break;
 
                 case '3':
+                    if (productList.isEmpty()) {
+                        System.out.println("Atenção: Não há produtos cadastrados no sistema.");
+                        break;
+                    }
+
+                    System.out.println("Visualização de um produto");
+                    System.out.println("--------------------------");
+                    System.out.println();
+
+                    System.out.print("Entre com o ID do produto: ");
+                    Integer productId = sc.nextInt();
+
+                    for (Product productModel : productList) {
+                        if (productModel.getId().equals(productId)) {
+                            System.out.println("Produto encontrado:");
+                            System.out.println();
+
+                            System.out.println(productModel.toString());
+                            break;
+                        }
+                    }
+
                     break;
 
                 case '4':
@@ -71,10 +116,16 @@ public class Main {
                     break;
 
                 default:
+                    System.out.println();
+                    System.out.println("Atenção: A opção que você tentou entrar não existe.");
+                    System.out.println();
+
                     break;
             }
 
         } while(menuOption != '9');
+
+        sc.close();
     }
 
 }
