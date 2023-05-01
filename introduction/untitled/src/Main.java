@@ -6,10 +6,10 @@ import java.util.Scanner;
 
 public class Main {
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
+    public static List<Product> productList = new ArrayList<>();
+    public static Scanner sc = new Scanner(System.in);
 
-        List<Product> productList = new ArrayList<>();
+    public static void main(String[] args) {
         char menuOption;
 
         do {
@@ -31,7 +31,7 @@ public class Main {
             Product product = new Product();
 
             switch (menuOption) {
-                case '1':
+                case '1' -> {
                     if (productList.isEmpty()) {
                         product.setId(productList.size() + 1);
                     }
@@ -78,24 +78,11 @@ public class Main {
                     product.setActive(isProductActive == '1');
 
                     productList.add(product);
-                break;
+                }
 
-                case '2':
-                    if (productList.isEmpty()) {
-                        System.out.println("Atenção: Não há produtos cadastrados no sistema.");
-                        break;
-                    }
+                case '2' -> listProducts();
 
-                    System.out.println("Lista de produtos cadastrados");
-                    System.out.println("-----------------------------");
-                    System.out.println();
-
-                    for (Product productModel : productList) {
-                        System.out.println(productModel.toString());
-                    }
-                break;
-
-                case '3':
+                case '3' -> {
                     if (productList.isEmpty()) {
                         System.out.println("Atenção: Não há produtos cadastrados no sistema.");
                         break;
@@ -108,26 +95,17 @@ public class Main {
                     System.out.print("Entre com o ID do produto: ");
                     Integer productId = sc.nextInt();
 
-                    boolean productWasFound = false;
+                    product = getProduct(productId);
 
-                    for (Product productModel : productList) {
-                        if (productModel.getId().equals(productId)) {
-                            productWasFound = true;
-
-                            System.out.println("Produto encontrado:");
-                            System.out.println();
-
-                            System.out.println(productModel.toString());
-                            break;
-                        }
+                    if (product == null) {
+                        System.out.println("O produto com o ID " + productId + " não foi encontrado.");
+                        break;
                     }
 
-                    if (!productWasFound) {
-                        System.out.println("O produto com ID " + productId + " não foi encontrado.");
-                    }
-                break;
+                    System.out.println(product.toString());
+                }
 
-                case '4':
+                case '4' -> {
                     if (productList.isEmpty()) {
                         System.out.println("Atenção: Não há produtos cadastrados no sistema.");
                         break;
@@ -138,59 +116,23 @@ public class Main {
                     System.out.println();
 
                     System.out.print("Entre com o ID do produto: ");
-                    productId = sc.nextInt();
+                    Integer productId = sc.nextInt();
 
-                    productWasFound = false;
+                    product = getProduct(productId);
 
-                    for (Product productModel : productList) {
-                        if (productModel.getId().equals(productId)) {
-                            productWasFound = true;
-
-                            System.out.println("Produto encontrado:");
-                            System.out.println();
-
-                            System.out.println(productModel.toString());
-
-                            System.out.print("Entre com o nome do produto: ");
-                            productModel.setName(sc.next());
-
-                            System.out.print("Entre com o preço do produto: $");
-                            productModel.setPrice(sc.nextFloat());
-
-                            System.out.print("Entre com o estoque do produto: ");
-                            productModel.setStock(sc.nextInt());
-
-                            System.out.println("Produto ativo?");
-                            System.out.println("1) Sim");
-                            System.out.println("2) Não");
-                            System.out.print("-> ");
-
-                            isProductActive = sc.next().charAt(0);
-
-                            while (isProductActive != '1' && isProductActive != '2') {
-                                System.out.println();
-                                System.out.println("Atenção: entre apenas com os caracteres '1' para sim ou '2' para não.");
-                                System.out.println();
-
-                                System.out.println("Produto ativo?");
-                                System.out.println("1) Sim");
-                                System.out.println("2) Não");
-                                System.out.print("-> ");
-
-                                isProductActive = sc.next().charAt(0);
-                            }
-
-                            productModel.setActive(isProductActive == '1');
-                            break;
-                        }
+                    if (product == null) {
+                        System.out.println("O produto com o ID " + productId + " não foi encontrado.");
+                        break;
                     }
 
-                    if (!productWasFound) {
-                        System.out.println("O produto com ID " + productId + " não foi encontrado.");
-                    }
-                break;
+                    System.out.println(product.toString());
 
-                case '5':
+                    updateProduct(product);
+
+                    System.out.println("O produto foi alterado com sucesso!");
+                }
+
+                case '5' -> {
                     if (productList.isEmpty()) {
                         System.out.println("Atenção: Não há produtos cadastrados no sistema.");
                         break;
@@ -201,9 +143,9 @@ public class Main {
                     System.out.println();
 
                     System.out.print("Entre com o ID do produto: ");
-                    productId = sc.nextInt();
+                    Integer productId = sc.nextInt();
 
-                    productWasFound = false;
+                    boolean productWasFound = false;
 
                     for (Product productModel : productList) {
                         if (productModel.getId().equals(productId)) {
@@ -242,18 +184,76 @@ public class Main {
                     if (!productWasFound) {
                         System.out.println("O produto com ID " + productId + " não foi encontrado.");
                     }
-                break;
+                }
 
-                default:
+                case 9 -> System.out.println("Saindo do sistema...");
+
+                default -> {
                     System.out.println();
                     System.out.println("Atenção: A opção que você tentou entrar não existe.");
                     System.out.println();
-                break;
+                }
             }
 
         } while(menuOption != '9');
+    }
 
-        sc.close();
+    public static void listProducts() {
+        if (productList.isEmpty()) {
+            System.out.println("Atenção: Não há produtos cadastrados no sistema.");
+        }
+
+        else {
+            for (Product product : productList) {
+                System.out.println(product.toString());
+            }
+        }
+    }
+
+    public static Product getProduct(Integer productId) {
+        for (Product product : productList) {
+            if (product.getId().equals(productId)) {
+                System.out.println("Produto encontrado:");
+                System.out.println();
+
+                return product;
+            }
+        }
+
+        return null;
+    }
+
+    public static void updateProduct(Product product) {
+        System.out.print("Entre com o nome do produto: ");
+        product.setName(sc.next());
+
+        System.out.print("Entre com o preço do produto: $");
+        product.setPrice(sc.nextFloat());
+
+        System.out.print("Entre com o estoque do produto: ");
+        product.setStock(sc.nextInt());
+
+        System.out.println("Produto ativo?");
+        System.out.println("1) Sim");
+        System.out.println("2) Não");
+        System.out.print("-> ");
+
+        char isProductActive = sc.next().charAt(0);
+
+        while (isProductActive != '1' && isProductActive != '2') {
+            System.out.println();
+            System.out.println("Atenção: entre apenas com os caracteres '1' para sim ou '2' para não.");
+            System.out.println();
+
+            System.out.println("Produto ativo?");
+            System.out.println("1) Sim");
+            System.out.println("2) Não");
+            System.out.print("-> ");
+
+            isProductActive = sc.next().charAt(0);
+        }
+
+        product.setActive(isProductActive == '1');
     }
 
 }
