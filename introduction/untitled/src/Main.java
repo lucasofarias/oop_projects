@@ -13,38 +13,13 @@ public class Main {
         char menuOption;
 
         do {
-            System.out.println("Gerenciamento de Produtos");
-            System.out.println("-------------------------");
-            System.out.println();
-
-            System.out.println("1) Adicionar um produto");
-            System.out.println("2) Listar seus produtos");
-            System.out.println("3) Visualizar um produto");
-            System.out.println("4) Alterar um produto");
-            System.out.println("5) Excluir um produto");
-            System.out.println("9) Sair");
-            System.out.println();
-
-            System.out.print("-> ");
-            menuOption = sc.next().charAt(0);
-
             Product product = new Product();
+
+            menuOption = showMenuAndSelectOption();
 
             switch (menuOption) {
                 case '1' -> {
-                    if (productList.isEmpty()) {
-                        product.setId(productList.size() + 1);
-                    }
-
-                    else {
-                        for (int i = 0; i < productList.size(); i++) {
-                            if (i == productList.size() - 1) {
-                                Product lastProductOnList = productList.get(i);
-
-                                product.setId(lastProductOnList.getId() + 1);
-                            }
-                        }
-                    }
+                    product.setId(generateId());
 
                     System.out.print("Entre com o nome do produto: ");
                     product.setName(sc.next());
@@ -60,20 +35,7 @@ public class Main {
                     System.out.println("2) Não");
                     System.out.print("-> ");
 
-                    char isProductActive = sc.next().charAt(0);
-
-                    while (isProductActive != '1' && isProductActive != '2') {
-                        System.out.println();
-                        System.out.println("Atenção: entre apenas com o caractere '1' para sim ou '2' para não.");
-                        System.out.println();
-
-                        System.out.println("Produto ativo?");
-                        System.out.println("1) Sim");
-                        System.out.println("2) Não");
-                        System.out.print("-> ");
-
-                        isProductActive = sc.next().charAt(0);
-                    }
+                    char isProductActive = enterConfirmCharacter();
 
                     product.setActive(isProductActive == '1');
 
@@ -83,8 +45,8 @@ public class Main {
                 case '2' -> listProducts();
 
                 case '3' -> {
-                    if (productList.isEmpty()) {
-                        System.out.println("Atenção: Não há produtos cadastrados no sistema.");
+                    if (isProductListEmpty()) {
+                        System.out.println("Atenção: não há produtos cadastrados no sistema.");
                         break;
                     }
 
@@ -102,11 +64,11 @@ public class Main {
                         break;
                     }
 
-                    System.out.println(product.toString());
+                    System.out.println(product);
                 }
 
                 case '4' -> {
-                    if (productList.isEmpty()) {
+                    if (isProductListEmpty()) {
                         System.out.println("Atenção: Não há produtos cadastrados no sistema.");
                         break;
                     }
@@ -133,7 +95,7 @@ public class Main {
                 }
 
                 case '5' -> {
-                    if (productList.isEmpty()) {
+                    if (isProductListEmpty()) {
                         System.out.println("Atenção: Não há produtos cadastrados no sistema.");
                         break;
                     }
@@ -145,44 +107,18 @@ public class Main {
                     System.out.print("Entre com o ID do produto: ");
                     Integer productId = sc.nextInt();
 
-                    boolean productWasFound = false;
+                    product = getProduct(productId);
 
-                    for (Product productModel : productList) {
-                        if (productModel.getId().equals(productId)) {
-                            productWasFound = true;
-
-                            System.out.println("Produto encontrado:");
-                            System.out.println();
-
-                            System.out.println(productModel.toString());
-
-                            System.out.println("Tem certeza de quer quer deletar esse produto?");
-                            System.out.println("1) Sim");
-                            System.out.println("2) Não");
-                            System.out.print("-> ");
-
-                            char deleteProductQuestion = sc.next().charAt(0);
-
-                            while (deleteProductQuestion != '1' && deleteProductQuestion != '2') {
-                                System.out.println("Atenção: entre apenas com os caracteres '1' para sim ou '2' para não.");
-                                System.out.println("1) Sim");
-                                System.out.println("2) Não");
-                                System.out.print("-> ");
-
-                                deleteProductQuestion = sc.next().charAt(0);
-                            }
-
-                            if (deleteProductQuestion == '1') {
-                                productList.remove(productModel);
-                                System.out.println("O produto foi deletado com sucesso!");
-
-                                break;
-                            }
-                        }
+                    if (product == null) {
+                        System.out.println("O produto com ID " + productId + " não foi encontrado.");
+                        break;
                     }
 
-                    if (!productWasFound) {
-                        System.out.println("O produto com ID " + productId + " não foi encontrado.");
+                    char deleteProductQuestion = enterConfirmCharacter();
+
+                    if (deleteProductQuestion == '1') {
+                        productList.remove(product);
+                        System.out.println("O produto foi deletado com sucesso!");
                     }
                 }
 
@@ -196,6 +132,52 @@ public class Main {
             }
 
         } while(menuOption != '9');
+    }
+
+    public static char showMenuAndSelectOption() {
+        System.out.println("Gerenciamento de Produtos");
+        System.out.println("-------------------------");
+        System.out.println();
+
+        System.out.println("1) Adicionar um produto");
+        System.out.println("2) Listar seus produtos");
+        System.out.println("3) Visualizar um produto");
+        System.out.println("4) Alterar um produto");
+        System.out.println("5) Excluir um produto");
+        System.out.println("9) Sair");
+        System.out.println();
+
+        System.out.print("-> ");
+        char menuOption = sc.next().charAt(0);
+
+        return menuOption;
+    }
+
+    public static char enterConfirmCharacter() {
+        char character = sc.next().charAt(0);
+
+        while (character != '1' && character != '2') {
+            System.out.println("Atenção: entre apenas com os caracteres '1' para sim ou '2' para não.");
+            System.out.println("1) Sim");
+            System.out.println("2) Não");
+            System.out.print("-> ");
+
+            character = sc.next().charAt(0);
+        }
+
+        return character;
+    }
+
+    public static Integer generateId() {
+        if (isProductListEmpty()) {
+            return 1;
+        }
+
+        return productList.get(productList.size() - 1).getId() + 1;
+    }
+
+    public static boolean isProductListEmpty() {
+        return productList.isEmpty();
     }
 
     public static void listProducts() {
